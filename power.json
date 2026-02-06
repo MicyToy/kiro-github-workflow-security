@@ -1,0 +1,43 @@
+{
+  "name": "github-workflow-security",
+  "displayName": "GitHub Workflow Security",
+  "version": "1.0.0",
+  "description": "自动扫描和加固 GitHub Actions workflow 文件的安全性",
+  "scope": "global",
+  "keywords": [
+    "github",
+    "actions",
+    "workflow",
+    "security",
+    "permissions",
+    "commit-hash",
+    "supply-chain",
+    "安全",
+    "工作流",
+    "权限"
+  ],
+  "author": "Kiro Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kiro/powers/github-workflow-security"
+  },
+  "files": [
+    "POWER.md",
+    "power.json",
+    "skills/github-workflow-security.md",
+    "scripts/harden-workflows.py",
+    "scripts/get-action-commit.py",
+    "data/action-commit-map.json",
+    "README.md"
+  ],
+  "capabilities": {
+    "skills": true,
+    "scripts": true,
+    "data": true
+  },
+  "requirements": {
+    "python": ">=3.8",
+    "kiro": ">=1.0.0"
+  }
+}
