@@ -49,6 +49,9 @@ python3 ~/.kiro/powers/github-workflow-security/scripts/harden-workflows.py
 # 查询 action 的 commit hash
 python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout v4
 
+# 查询分支的最新 commit
+python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout main
+
 # 添加到映射表
 python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout v4 --save
 ```

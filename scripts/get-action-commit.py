@@ -3,9 +3,14 @@
 GitHub Action Commit Hash 获取工具
 
 用法:
+    # 使用版本标签
     python get-action-commit.py actions/checkout v4
     python get-action-commit.py docker/setup-buildx-action v3.12.0
     python get-action-commit.py actions/checkout v4 --save  # 保存到映射表
+    
+    # 使用分支（不会保存到映射表）
+    python get-action-commit.py actions/checkout master
+    python get-action-commit.py actions/checkout main
 """
 
 import sys
@@ -222,6 +227,44 @@ def suggest_available_versions(all_tags: List[str], requested_version: str, acti
 
 
 
+def get_branch_commit(action_name: str, branch: str) -> Optional[Tuple[str, str]]:
+    """
+    从 GitHub API 获取指定分支的最新 commit hash
+    
+    Args:
+        action_name: action 名称，如 'actions/checkout'
+        branch: 分支名称，如 'master' 或 'main'
+    
+    Returns:
+        (commit_sha, branch_name) 或 None
+    """
+    try:
+        # 获取分支信息
+        branch_url = f'https://api.github.com/repos/{action_name}/branches/{branch}'
+        req = urllib.request.Request(branch_url)
+        req.add_header('Accept', 'application/vnd.github.v3+json')
+        req.add_header('User-Agent', 'GitHub-Action-Security-Tool')
+        
+        with urllib.request.urlopen(req, timeout=10) as response:
+            branch_data = json.loads(response.read().decode('utf-8'))
+            commit_sha = branch_data['commit']['sha']
+            return commit_sha, branch
+            
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print(f"❌ 错误: 未找到分支 '{branch}' 在仓库 {action_name} 中", file=sys.stderr)
+            print(f"💡 提示: 尝试使用 'master' 或 'main' 分支", file=sys.stderr)
+        else:
+            print(f"❌ HTTP 错误 {e.code}: {e.reason}", file=sys.stderr)
+        return None
+    except urllib.error.URLError as e:
+        print(f"❌ 网络错误: {e.reason}", file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f"❌ 查询分支时出错: {e}", file=sys.stderr)
+        return None
+
+
 def get_commit_hash(action_name: str, tag: str) -> Optional[Tuple[str, str]]:
     """
     从 GitHub API 获取指定 action tag 的 commit hash
@@ -366,65 +409,103 @@ def save_to_map(action_name: str, tag: str, commit_sha: str, version: str) -> bo
         return False
 
 
-def format_output(action_name: str, tag: str, commit_sha: str, version: str, saved: bool = False) -> None:
+def format_output(action_name: str, tag: str, commit_sha: str, version: str, saved: bool = False, is_branch: bool = False) -> None:
     """格式化输出结果"""
     print(f"\n✓ 成功获取 commit hash:")
     print(f"  Action: {action_name}")
-    print(f"  Tag: {tag}")
-    print(f"  Version: {version}")
-    print(f"  Commit SHA: {commit_sha}")
-    print(f"\n📋 使用格式:")
-    print(f"  - uses: {action_name}@{commit_sha} # {version}")
-    
-    if not saved:
-        print(f"\n📝 映射表格式:")
-        print(f"  \"{action_name}@{tag}\": {{")
-        print(f"    \"sha\": \"{commit_sha}\",")
-        print(f"    \"version\": \"{version}\"")
-        print(f"  }}")
-        print(f"\n💡 提示: 使用 --save 参数可直接保存到映射表")
+    if is_branch:
+        print(f"  Branch: {tag}")
+        print(f"  Commit SHA: {commit_sha}")
+        print(f"\n📋 使用格式:")
+        print(f"  - uses: {action_name}@{commit_sha} # {tag} branch")
+        print(f"\n⚠️  注意: 分支的 commit hash 会随时间变化，建议定期更新")
+    else:
+        print(f"  Tag: {tag}")
+        print(f"  Version: {version}")
+        print(f"  Commit SHA: {commit_sha}")
+        print(f"\n📋 使用格式:")
+        print(f"  - uses: {action_name}@{commit_sha} # {version}")
+        
+        if not saved:
+            print(f"\n📝 映射表格式:")
+            print(f"  \"{action_name}@{tag}\": {{")
+            print(f"    \"sha\": \"{commit_sha}\",")
+            print(f"    \"version\": \"{version}\"")
+            print(f"  }}")
+            print(f"\n💡 提示: 使用 --save 参数可直接保存到映射表")
 
 
 def main():
     """主函数"""
     if len(sys.argv) < 3:
-        print("用法: python get-action-commit.py <action-name> <tag> [--save]")
+        print("用法: python get-action-commit.py <action-name> <tag|branch> [--save]")
         print("\n示例:")
+        print("  # 使用版本标签")
         print("  python get-action-commit.py actions/checkout v4")
         print("  python get-action-commit.py docker/setup-buildx-action v3.12.0")
         print("  python get-action-commit.py pnpm/action-setup 4.2.0")
         print("  python get-action-commit.py actions/checkout v4 --save  # 保存到映射表")
+        print("\n  # 使用分支（不会保存到映射表）")
+        print("  python get-action-commit.py actions/checkout master")
+        print("  python get-action-commit.py actions/checkout main")
         sys.exit(1)
     
     action_name = sys.argv[1]
-    tag = sys.argv[2]
+    tag_or_branch = sys.argv[2]
     should_save = '--save' in sys.argv or '-s' in sys.argv
     
-    print(f"🔍 正在查询 {action_name}@{tag} ...")
+    # 首先尝试作为版本标签处理
+    parsed_version = parse_version(tag_or_branch if tag_or_branch.startswith('v') else f'v{tag_or_branch}')
     
-    # 获取 commit hash
-    result = get_commit_hash(action_name, tag)
-    
-    if result:
-        commit_sha, actual_tag = result
+    # 如果是有效的版本号格式，作为 tag 处理
+    if parsed_version:
+        print(f"🔍 正在查询 {action_name}@{tag_or_branch} ...")
         
-        # actual_tag 现在已经是完整的版本号（如 v5.4.0）
-        version = actual_tag
+        # 获取 tag 的 commit hash
+        result = get_commit_hash(action_name, tag_or_branch)
         
-        # 如果指定了 --save，保存到映射表
-        saved = False
-        if should_save:
-            saved = save_to_map(action_name, tag, commit_sha, version)
-        
-        format_output(action_name, tag, commit_sha, version, saved)
-        sys.exit(0)
+        if result:
+            commit_sha, actual_tag = result
+            
+            # actual_tag 现在已经是完整的版本号（如 v5.4.0）
+            version = actual_tag
+            
+            # 如果指定了 --save，保存到映射表
+            saved = False
+            if should_save:
+                saved = save_to_map(action_name, tag_or_branch, commit_sha, version)
+            
+            format_output(action_name, tag_or_branch, commit_sha, version, saved, is_branch=False)
+            sys.exit(0)
+        else:
+            print(f"\n❌ 无法获取 {action_name}@{tag_or_branch} 的 commit hash")
+            print("\n💡 提示:")
+            print("  1. 检查 action 名称是否正确")
+            print("  2. 检查 tag 版本是否存在")
+            print("  3. 如果要查询分支，请使用 'master' 或 'main'")
+            print(f"  4. 访问 https://github.com/{action_name}/tags 查看可用版本")
+            sys.exit(1)
     else:
-        print(f"\n❌ 无法获取 {action_name}@{tag} 的 commit hash")
-        print("\n💡 提示:")
-        print("  1. 检查 action 名称是否正确")
-        print("  2. 检查 tag 版本是否存在")
-        print("  3. 访问 https://github.com/{action_name}/tags 查看可用版本")
-        sys.exit(1)
+        # 无效的版本号格式，尝试作为分支处理
+        print(f"🔍 正在查询 {action_name} 的 {tag_or_branch} 分支最新 commit ...")
+        
+        if should_save:
+            print("⚠️  注意: 分支 commit 不会保存到映射表（因为会随时间变化）")
+        
+        # 获取分支的最新 commit
+        result = get_branch_commit(action_name, tag_or_branch)
+        
+        if result:
+            commit_sha, branch = result
+            format_output(action_name, branch, commit_sha, branch, saved=False, is_branch=True)
+            sys.exit(0)
+        else:
+            print(f"\n❌ 无法获取 {action_name} 的 {tag_or_branch} 分支 commit hash")
+            print("\n💡 提示:")
+            print("  1. 检查 action 名称是否正确")
+            print("  2. 检查分支名称是否存在")
+            print(f"  3. 访问 https://github.com/{action_name}/branches 查看可用分支")
+            sys.exit(1)
 
 
 if __name__ == '__main__':

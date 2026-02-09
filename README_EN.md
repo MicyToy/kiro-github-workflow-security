@@ -55,6 +55,9 @@ python3 .kiro/scripts/harden-workflows.py
 # Query action commit hash
 python3 .kiro/scripts/get-action-commit.py actions/checkout v4
 
+# Query latest commit from branch
+python3 .kiro/scripts/get-action-commit.py actions/checkout main
+
 # Add to mapping table
 python3 .kiro/scripts/get-action-commit.py actions/checkout v4 --save
 ```
@@ -186,12 +189,29 @@ Options:
 ### get-action-commit.py
 
 ```bash
-python3 .kiro/scripts/get-action-commit.py <action-name> <tag> [--save]
+python3 .kiro/scripts/get-action-commit.py <action-name> <tag|branch> [--save]
 
 Arguments:
   action-name                 Action name (e.g., actions/checkout)
-  tag                        Version tag (e.g., v4)
-  --save, -s                 Save to mapping table
+  tag                        Version tag (e.g., v4, v4.3.1)
+  branch                     Branch name (e.g., master, main, develop)
+  --save, -s                 Save to mapping table (only for tags)
+
+Notes:
+  - Script automatically detects whether input is a version tag or branch name
+  - Version tag format: starts with 'v' followed by numbers (e.g., v4, v4.3.1)
+  - Other formats are treated as branch names
+  - Branch commit hashes won't be saved to mapping table (as they change over time)
+
+Examples:
+  # Using version tags
+  python3 .kiro/scripts/get-action-commit.py actions/checkout v4
+  python3 .kiro/scripts/get-action-commit.py actions/checkout v4 --save
+  
+  # Using branches (auto-detected)
+  python3 .kiro/scripts/get-action-commit.py actions/checkout main
+  python3 .kiro/scripts/get-action-commit.py actions/setup-node master
+  python3 .kiro/scripts/get-action-commit.py some/action develop
 ```
 
 ## 🔐 Security Best Practices

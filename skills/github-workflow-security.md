@@ -67,6 +67,9 @@ python3 ~/.kiro/powers/github-workflow-security/scripts/harden-workflows.py --di
 # 查询并显示映射格式
 python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/cache v4
 
+# 查询分支的最新 commit
+python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/cache main
+
 # 查询并直接保存到映射表
 python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/cache v4 --save
 ```
@@ -136,6 +139,9 @@ python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py som
 ```bash
 # 基本用法
 python ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout v4
+
+# 查询分支
+python ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout main
 
 # 其他示例
 python ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py docker/setup-buildx-action v3.12.0

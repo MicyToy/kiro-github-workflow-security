@@ -55,6 +55,9 @@ python3 .kiro/scripts/harden-workflows.py
 # 查询 action 的 commit hash
 python3 .kiro/scripts/get-action-commit.py actions/checkout v4
 
+# 查询分支的最新 commit
+python3 .kiro/scripts/get-action-commit.py actions/checkout main
+
 # 添加到映射表
 python3 .kiro/scripts/get-action-commit.py actions/checkout v4 --save
 ```
@@ -186,12 +189,29 @@ python3 .kiro/scripts/harden-workflows.py [OPTIONS]
 ### get-action-commit.py
 
 ```bash
-python3 .kiro/scripts/get-action-commit.py <action-name> <tag> [--save]
+python3 .kiro/scripts/get-action-commit.py <action-name> <tag|branch> [--save]
 
 参数:
   action-name                 Action 名称 (如: actions/checkout)
-  tag                        版本标签 (如: v4)
-  --save, -s                 保存到映射表
+  tag                        版本标签 (如: v4, v4.3.1)
+  branch                     分支名称 (如: master, main, develop)
+  --save, -s                 保存到映射表 (仅适用于 tag)
+
+说明:
+  - 脚本会自动检测输入是版本标签还是分支名称
+  - 版本标签格式: v开头的数字 (如 v4, v4.3.1)
+  - 其他格式会被视为分支名称
+  - 分支的 commit hash 不会保存到映射表（因为会随时间变化）
+
+示例:
+  # 使用版本标签
+  python3 .kiro/scripts/get-action-commit.py actions/checkout v4
+  python3 .kiro/scripts/get-action-commit.py actions/checkout v4 --save
+  
+  # 使用分支（自动检测）
+  python3 .kiro/scripts/get-action-commit.py actions/checkout main
+  python3 .kiro/scripts/get-action-commit.py actions/setup-node master
+  python3 .kiro/scripts/get-action-commit.py some/action develop
 ```
 
 ## 🔐 安全最佳实践

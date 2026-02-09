@@ -5,8 +5,12 @@
 ### 1. 测试 get-action-commit.py
 
 ```bash
-# 测试查询功能
+# 测试查询版本标签功能
 python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout v4
+
+# 测试查询分支功能
+python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout main
+python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/setup-node master
 
 # 预期输出:
 # ✓ 成功获取 commit hash:
@@ -144,7 +148,9 @@ jobs:
 ## 验证清单
 
 - [ ] get-action-commit.py 可以查询 action commit hash
+- [ ] get-action-commit.py 可以查询分支的最新 commit
 - [ ] get-action-commit.py --save 可以保存到映射表
+- [ ] 分支查询不会保存到映射表
 - [ ] harden-workflows.py 可以扫描 workflow 文件
 - [ ] harden-workflows.py 可以添加 permissions
 - [ ] harden-workflows.py 可以替换 action 版本
