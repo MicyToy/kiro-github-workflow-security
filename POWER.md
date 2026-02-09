@@ -1,3 +1,21 @@
+---
+name: github-workflow-security
+description: 自动扫描和加固 GitHub Actions workflow 文件的安全性
+version: 1.0.0
+keywords: [
+    github,
+    actions,
+    workflow,
+    security,
+    permissions,
+    commit-hash,
+    supply-chain,
+    安全,
+    工作流,
+    权限
+  ]
+---
+
 # GitHub Workflow Security Power
 
 自动扫描和加固 GitHub Actions workflow 文件的安全性工具。

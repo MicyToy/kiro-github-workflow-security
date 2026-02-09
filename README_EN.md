@@ -43,7 +43,7 @@ chmod +x .kiro/scripts/*.py
 ### Using with Kiro
 
 ```
-Use the github-workflow-security skill to scan and harden all workflows
+use the github-workflow-security skill to secure all workflows.
 ```
 
 ### Command-line Usage
