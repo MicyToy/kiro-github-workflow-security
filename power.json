@@ -25,6 +25,7 @@
   "files": [
     "POWER.md",
     "power.json",
+    "github-workflow-security.md",
     "skills/github-workflow-security.md",
     "scripts/harden-workflows.py",
     "scripts/get-action-commit.py",

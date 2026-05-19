@@ -123,6 +123,15 @@ permissions:
 可使用以下命令获取 commit hash：
 python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py some/action v1
 ```
+### 步骤 6: 提交修改
+用户Review完成后，询问用户是否需要提交。如果用户回答是，则：
+
+1. 自动提交代码。commit message中列出处理过的action版本，格式为
+  ```
+    chrone: update action versions
+    - some/action@v1
+  ```
+2. 始终调用`git-commit.sh`脚本提交，提交message由参数传入。
 
 ## Action Commit SHA 映射表
 
