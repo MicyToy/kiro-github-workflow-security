@@ -108,6 +108,11 @@ permissions:
 3. **NEVER USE Web Search To find the latest version**
 
 ### 步骤 5: 替换 action 版本为 commit SHA
+
+检查分支是否符合[提交规范](#提交规范)
+1. 检查当前分支名
+2. 如果当前分支不符合规范，则**检出新分支**。
+
 对于每个 `uses:` 行：
 1. 解析 action 名称和版本（如 `actions/checkout@v4`）
 2. 从 `data/action-commit-map.json` 查找映射
@@ -147,10 +152,8 @@ python3 scripts/get-action-commit.py some/action v1
 ### 步骤 8: 提交修改
 用户 Review 完成后，询问用户是否需要提交。如果用户回答是，则根据 [提交规范](#提交规范) 进行操作：
 
-1. 检查当前分支名
-2. 如果当前分支不符合规范，则**检出新分支**。
-3. 构造规范的 commit message。
-4. 提交新分支
+1. 构造规范的 commit message。
+2. 提交新分支
 
 ## Action Commit SHA 映射表
 
