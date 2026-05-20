@@ -44,88 +44,47 @@ author: MicyToy
 
 ## 使用方法
 
-### 方式 1: 通过 Kiro Skill（推荐）
+详细的使用方式已拆分到以下文档：
 
-在 Kiro 中直接使用：
-```
-使用 github-workflow-security skill 扫描并加固所有 workflow
-```
+- [方式 1: 通过 Kiro Skill](steering/kiro-skill.md)（推荐）
+- [方式 2: 使用 Git MCP](steering/git-mcp.md)（推荐）
+- [方式 3: 使用项目脚本](steering/scripts.md)
 
-或指定自定义 permissions：
-```
-使用 github-workflow-security skill，设置 permissions 为：
-permissions:
-  contents: read
-  pull-requests: write
-```
+### 工具说明
 
-### 方式 2: 使用 Git MCP（推荐）
+为保证操作规范，建议优先使用 `scripts/` 目录下的专用工具：
 
-如果你的环境中配置了 Git MCP，可以直接通过对话指令调用相关工具，它会自动处理 API 调用和文件读写：
+- **`harden-workflows.py`**: 自动扫描并加固 Workflow 文件。
+- **`get-action-commit.py`**: 查询 Action 的 Commit SHA 并支持保存到映射表。
+- **`github-fetch-release.sh`**: 获取 Action 的最新 Release 版本。
+- **`git-checkout-pull.sh`**: 安全地检出并拉取指定分支。
+- **`git-commit.sh`**: 规范化提交变更。
 
-#### 使用 Git MCP 搜索并加固项目中的 workflows
-1. 搜索 .github/workflows 目录下的 yml 文件
-2. 如果用户要求升级action版本，则使用MCP工具获取新的action Release版本。默认不升级major版本。
-3. 对每个文件执行安全加固建议（添加 permissions，固定 action 版本为 SHA）
-4. 拉取修复分支，分支格式为
+详细参数及示例见 [项目脚本使用说明](steering/scripts.md)。
+
+## 提交规范
+
+在进行安全加固修改后，必须遵守以下 Git 规范：
+
+### 1. 分支命名规范
+如果当前不在以 `opt/` 开头的修复分支上，必须检出新分支：
+- 格式：`opt/ci_xxx` （`xxx` 为本次修改的简略说明，如 `harden_checkout`）
+
+### 2. Commit Message 规范
+提交消息必须清晰列出处理过的 Action 及其版本：
+- 格式：
+  ```text
+  chore: update action versions
+  - <action_name>@<old_version> -> <action_name>@<new_version>
   ```
-    # xxx是当前修改的一个简略信息
-    opt/ci_xxx
+- 示例：
+  ```text
+  chore: update action versions
+  - actions/checkout@v4 -> actions/checkout@v5
+  - actions/setup-node@v4 -> actions/setup-node@v4.1
   ```
-5. 提交修改并创建 Pull Request。提交message格式
-  ```
-    chore: update action versions
-    - some/action@v1
-  ```
-  
 
-### 方式 3: 使用项目脚本
-
-为了保证操作的规范性和安全性，在手动操作或脚本集成时，**应优先使用 `scripts/` 目录下的专用脚本**，避免直接运行原生 `bash` 或 `git` 命令。
-
-#### 1. 准备工作：拉取代码
-```bash
-# 自动检出并拉取指定分支（如 main）
-bash scripts/git-checkout-pull.sh main
-```
-
-#### 2. 核心功能：扫描并加固 Workflow
-```bash
-# 加固所有 workflow 文件（使用默认 permissions）
-python3 scripts/harden-workflows.py
-
-# 使用自定义 permissions
-python3 scripts/harden-workflows.py --permissions "permissions:\n  contents: read\n  pull-requests: write\n"
-
-# 指定 workflow 目录
-python3 scripts/harden-workflows.py --dir .github/workflows
-```
-
-#### 3. 辅助功能：查询最新版本
-```bash
-# 获取指定 action 的最新 Release Tag
-bash scripts/github-fetch-release.sh actions/checkout
-```
-
-#### 4. 辅助功能：获取 Action 映射
-```bash
-# 查询并显示映射格式
-python3 scripts/get-action-commit.py actions/cache v4
-
-# 查询分支的最新 commit
-python3 scripts/get-action-commit.py actions/cache main
-
-# 查询并直接保存到映射表
-python3 scripts/get-action-commit.py actions/cache v4 --save
-```
-
-#### 5. 完成工作：提交变更
-```bash
-# 自动添加变更并提交（支持多行 message）
-bash scripts/git-commit.sh "chore: harden github workflows security"
-```
-
-## 实现逻辑
+## 任务流说明
 调用SKILL中包含的脚本，完成workflow安全加固的任务。替换完成后可根据用户选择进行Review。
 
 ### 步骤 1: 拉取最新代码
@@ -183,19 +142,13 @@ permissions:
 可使用以下命令获取 commit hash：
 python3 scripts/get-action-commit.py some/action v1
 ```
-### 步骤 8: 提交修改
-用户 Review 完成后，询问用户是否需要提交。如果用户回答是，则：
+**用户确认修改**后，修改本文件目录下`data/action-commit-map.json`，添加新的版本映射。
 
-1. 如果当前分支为 main/master 分支，或者不是 opt 开头的分支，则使用 `scripts/git-checkout-pull.sh` 检出一个新的 opt 分支进行操作。分支命名规则为：
-  ```
-    # xxx是当前修改的一个简略信息
-    opt/ci_xxx
-  ```
-2. 自动提交代码。commit message 中列出处理过的 action 版本，格式为：
-  ```
-    chore: update action versions
-    - some/action@v1
-  ```
+### 步骤 8: 提交修改
+用户 Review 完成后，询问用户是否需要提交。如果用户回答是，则根据 [提交规范](#提交规范) 进行操作：
+
+1. 如果当前分支不符合规范，则检出新分支。
+2. 构造规范的 commit message。
 3. **必须始终调用 `scripts/git-commit.sh` 脚本提交**，严禁直接使用原生命令。提交 message 由参数传入。
 
 ## Action Commit SHA 映射表
