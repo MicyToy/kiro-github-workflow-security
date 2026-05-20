@@ -59,9 +59,29 @@ permissions:
   pull-requests: write
 ```
 
-### 方式 2: 使用项目脚本（优先级最高）
+### 方式 2: 使用 Git MCP（推荐）
 
-为了保证操作的规范性和安全性，**应优先使用 `scripts/` 目录下的专用脚本**，避免直接运行原生 `bash` 或 `git` 命令。
+如果你的环境中配置了 Git MCP，可以直接通过对话指令调用相关工具，它会自动处理 API 调用和文件读写：
+
+#### 使用 Git MCP 搜索并加固项目中的 workflows
+1. 搜索 .github/workflows 目录下的 yml 文件
+2. 如果用户要求升级action版本，则使用MCP工具获取新的action Release版本。默认不升级major版本。
+3. 对每个文件执行安全加固建议（添加 permissions，固定 action 版本为 SHA）
+4. 拉取修复分支，分支格式为
+  ```
+    # xxx是当前修改的一个简略信息
+    opt/ci_xxx
+  ```
+5. 提交修改并创建 Pull Request。提交message格式
+  ```
+    chore: update action versions
+    - some/action@v1
+  ```
+  
+
+### 方式 3: 使用项目脚本
+
+为了保证操作的规范性和安全性，在手动操作或脚本集成时，**应优先使用 `scripts/` 目录下的专用脚本**，避免直接运行原生 `bash` 或 `git` 命令。
 
 #### 1. 准备工作：拉取代码
 ```bash
