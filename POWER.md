@@ -88,7 +88,8 @@ author: MicyToy
 调用SKILL中包含的脚本，完成workflow安全加固的任务。替换完成后可根据用户选择进行Review。
 
 ### 步骤 1: 拉取最新代码
-- 必须优先使用 `scripts/git-checkout-pull.sh` 脚本拉取最新的代码仓库，确保分支状态正确。
+- **确保当前分支为main/master分支**。如果不是，则检出main/master分支。
+- 拉取main/master分支最新的仓库代码
 
 ### 步骤 2: 扫描 workflow 文件
 - 列出 `.github/workflows/` 目录下的所有 `.yml` 和 `.yaml` 文件
