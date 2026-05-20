@@ -67,7 +67,7 @@ author: MicyToy
 在进行安全加固修改后，必须遵守以下 Git 规范：
 
 ### 1. 分支命名规范
-如果当前不在以 `opt/` 开头的修复分支上，必须检出新分支：
+如果当前不在以 `opt/` 开头的修复分支上，**必须检出新分支**：
 - 格式：`opt/ci_xxx` （`xxx` 为本次修改的简略说明，如 `harden_checkout`）
 
 ### 2. Commit Message 规范
@@ -147,9 +147,10 @@ python3 scripts/get-action-commit.py some/action v1
 ### 步骤 8: 提交修改
 用户 Review 完成后，询问用户是否需要提交。如果用户回答是，则根据 [提交规范](#提交规范) 进行操作：
 
-1. 如果当前分支不符合规范，则检出新分支。
-2. 构造规范的 commit message。
-3. **必须始终调用 `scripts/git-commit.sh` 脚本提交**，严禁直接使用原生命令。提交 message 由参数传入。
+1. 检查当前分支名
+2. 如果当前分支不符合规范，则**检出新分支**。
+3. 构造规范的 commit message。
+4. 提交新分支
 
 ## Action Commit SHA 映射表
 
