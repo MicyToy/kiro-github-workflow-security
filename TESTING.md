@@ -6,11 +6,11 @@
 
 ```bash
 # 测试查询版本标签功能
-python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout v4
+python3 scripts/get-action-commit.py actions/checkout v4
 
 # 测试查询分支功能
-python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/checkout main
-python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py actions/setup-node master
+python3 scripts/get-action-commit.py actions/checkout main
+python3 scripts/get-action-commit.py actions/setup-node master
 
 # 预期输出:
 # ✓ 成功获取 commit hash:
@@ -25,7 +25,7 @@ python3 ~/.kiro/powers/github-workflow-security/scripts/get-action-commit.py act
 ```bash
 # 在测试项目中运行
 cd /path/to/test/project
-python3 ~/.kiro/powers/github-workflow-security/scripts/harden-workflows.py --help
+python3 scripts/harden-workflows.py --help
 
 # 预期输出: 显示帮助信息
 ```
@@ -52,7 +52,7 @@ jobs:
 EOF
 
 # 运行安装脚本
-bash ~/.kiro/powers/github-workflow-security/install.sh
+bash install.sh
 
 # 验证文件已复制
 ls -la .kiro/
@@ -229,7 +229,7 @@ mv test-project.backup test-project
 cd test-project
 
 # 1. 安装 power
-bash ~/.kiro/powers/github-workflow-security/install.sh
+bash install.sh
 
 # 2. 查询并添加新 action
 python3 .kiro/scripts/get-action-commit.py actions/cache v4 --save

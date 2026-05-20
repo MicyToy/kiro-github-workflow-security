@@ -36,8 +36,8 @@ class WorkflowHardener:
         if map_file is None:
             # 获取脚本所在目录
             script_dir = Path(__file__).parent.resolve()
-            # power 目录结构: ~/.kiro/powers/github-workflow-security/scripts/harden-workflows.py
-            # 映射文件位置: ~/.kiro/powers/github-workflow-security/data/action-commit-map.json
+            # power 目录结构: scripts/harden-workflows.py
+            # 映射文件位置: data/action-commit-map.json
             power_dir = script_dir.parent
             self.map_file = power_dir / 'data' / 'action-commit-map.json'
         else:

@@ -19,7 +19,7 @@
 
 ```bash
 cd your-project
-bash ~/.kiro/powers/github-workflow-security/install.sh
+bash install.sh
 ```
 
 ### 方式 2: 手动安装
@@ -29,10 +29,10 @@ bash ~/.kiro/powers/github-workflow-security/install.sh
 mkdir -p .kiro/{skills,scripts,data}
 
 # 复制文件
-cp ~/.kiro/powers/github-workflow-security/skills/* .kiro/skills/
-cp ~/.kiro/powers/github-workflow-security/scripts/* .kiro/scripts/
-cp ~/.kiro/powers/github-workflow-security/data/* .kiro/data/
-cp ~/.kiro/powers/github-workflow-security/README.md .kiro/
+cp skills/* .kiro/skills/
+cp scripts/* .kiro/scripts/
+cp data/* .kiro/data/
+cp README.md .kiro/
 
 # 设置权限
 chmod +x .kiro/scripts/*.py

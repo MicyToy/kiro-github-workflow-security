@@ -25,14 +25,16 @@ mkdir -p "$WORKSPACE_KIRO_DIR"/{skills,scripts,data}
 # 复制文件
 echo "📦 复制文件..."
 cp "$POWER_DIR/skills/github-workflow-security.md" "$WORKSPACE_KIRO_DIR/skills/"
-cp "$POWER_DIR/scripts/harden-workflows.py" "$WORKSPACE_KIRO_DIR/scripts/"
-cp "$POWER_DIR/scripts/get-action-commit.py" "$WORKSPACE_KIRO_DIR/scripts/"
+cp "$POWER_DIR/scripts/*.py" "$WORKSPACE_KIRO_DIR/scripts/"
+cp "$POWER_DIR/scripts/*.sh" "$WORKSPACE_KIRO_DIR/scripts/"
 cp "$POWER_DIR/data/action-commit-map.json" "$WORKSPACE_KIRO_DIR/data/"
 cp "$POWER_DIR/README.md" "$WORKSPACE_KIRO_DIR/"
+cp "$POWER_DIR/POWER.md" "$WORKSPACE_KIRO_DIR/"
+cp "$POWER_DIR/POWER.json" "$WORKSPACE_KIRO_DIR/"
 
 # 设置执行权限
-chmod +x "$WORKSPACE_KIRO_DIR/scripts/harden-workflows.py"
-chmod +x "$WORKSPACE_KIRO_DIR/scripts/get-action-commit.py"
+chmod +x "$WORKSPACE_KIRO_DIR/scripts/*.sh"
+
 
 echo "✅ 安装完成!"
 echo ""

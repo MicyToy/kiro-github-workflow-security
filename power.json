@@ -29,6 +29,8 @@
     "skills/github-workflow-security.md",
     "scripts/harden-workflows.py",
     "scripts/get-action-commit.py",
+    "scripts/git-checkout-pull.sh",
+    "scripts/github-fetch-release.sh",
     "data/action-commit-map.json",
     "README.md"
   ],

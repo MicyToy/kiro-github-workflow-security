@@ -19,7 +19,7 @@ A tool for automatically scanning and hardening the security of GitHub Actions w
 
 ```bash
 cd your-project
-bash ~/.kiro/powers/github-workflow-security/install.sh
+bash install.sh
 ```
 
 ### Method 2: Manual Installation
@@ -29,10 +29,10 @@ bash ~/.kiro/powers/github-workflow-security/install.sh
 mkdir -p .kiro/{skills,scripts,data}
 
 # Copy files
-cp ~/.kiro/powers/github-workflow-security/skills/* .kiro/skills/
-cp ~/.kiro/powers/github-workflow-security/scripts/* .kiro/scripts/
-cp ~/.kiro/powers/github-workflow-security/data/* .kiro/data/
-cp ~/.kiro/powers/github-workflow-security/README.md .kiro/
+cp skills/* .kiro/skills/
+cp scripts/* .kiro/scripts/
+cp data/* .kiro/data/
+cp README.md .kiro/
 
 # Set permissions
 chmod +x .kiro/scripts/*.py
