@@ -93,7 +93,7 @@ author: MicyToy
 
 ### 步骤 2: 扫描 workflow 文件
 - 列出 `.github/workflows/` 目录下的所有 `.yml` 和 `.yaml` 文件
-- 读取每个文件内容
+- 读取每个文件`uses:`这一行和`permissions:`相关的内容
 
 ### 步骤 3: 检查 permissions
 ```yaml
@@ -119,7 +119,8 @@ permissions:
 2. 从 `data/action-commit-map.json` 查找映射
 3. 如果找到映射，直接使用
 4. 如果未找到，调用 Python 脚本从 GitHub API 获取
-5. 替换格式：
+5. 只替换action的版本号和对应的commit SHA。**NEVER replace the step name and action name**
+6. 替换格式：
 ```yaml
 # 原始格式
 - uses: actions/checkout@v4
