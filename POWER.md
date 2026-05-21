@@ -89,7 +89,7 @@ author: MicyToy
 
 ### 步骤 1: 拉取最新代码
 - **确保当前分支为main/master分支**。如果不是，则检出main/master分支。
-- 拉取main/master分支最新的仓库代码
+- **拉取远程仓库main/master分支最新代码**
 
 ### 步骤 2: 扫描 workflow 文件
 - 列出 `.github/workflows/` 目录下的所有 `.yml` 和 `.yaml` 文件
