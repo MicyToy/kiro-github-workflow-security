@@ -43,6 +43,7 @@ author: MicyToy
    - 获取对应 tag 的 commit hash 和详细版本号
 
 ## 使用方法
+**MUST** follow the steps and guidelines to use this skill.
 
 详细的使用方式已拆分到以下文档：
 
@@ -59,6 +60,10 @@ author: MicyToy
 - **`github-fetch-release.sh`**: 获取 Action 的最新 Release 版本。
 - **`git-checkout-pull.sh`**: 安全地检出并拉取指定分支。
 - **`git-commit.sh`**: 规范化提交变更。
+
+如果scripts目录不可访问或不存在，则**尝试使用bash和git mcp**
+
+**NEVER use web search to find the latest version**
 
 详细参数及示例见 [项目脚本使用说明](steering/scripts.md)。
 
@@ -167,7 +172,9 @@ python3 scripts/get-action-commit.py some/action v1
 
 ### 优先使用项目脚本获取数据
 
-为了保证效率和准确性，**应优先使用脚本而非手动调用 API 或原生 Git 命令**。
+- 为了保证效率和准确性，**应优先使用scripts目录的脚本而非手动调用 API 或原生 Git 命令**。
+- 如果脚本不可访问或不存在，则**尝试使用bash和git mcp**
+- **NEVER use web search to find the latest version**
 
 #### 使用 Python 脚本获取 commit SHA
 
