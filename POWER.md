@@ -1,5 +1,6 @@
 ---
 name: GitHub Workflow Security
+description: A SKILL/POWER for auto-scaning GitHub Actions,and fixing security issue.
 version: 1.1
 date: 2026-05-20
 author: MicyToy
